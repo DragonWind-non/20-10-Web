@@ -1,0 +1,14 @@
+{
+  "name": "20-10-four-seasons",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Hành trình 3D bốn mùa cùng WALL-E và EVE nhân ngày 20/10.",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test tests/*.js"
+  }
+}

@@ -1,0 +1,28 @@
+.superpowers/
+node_modules/
+.DS_Store
+Thumbs.db
+.playwright-mcp/
+/*.png
+
+# Local reports, captures and deployment snapshots
+/output/
+/dist/
+/coverage/
+*.log
+__pycache__/
+*.py[cod]
+
+# Credentials and machine-specific configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+.wrangler/
+.dev.vars
+.dev.vars.*
+.vscode/
+.idea/
