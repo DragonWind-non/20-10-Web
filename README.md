@@ -4,6 +4,12 @@ Website thiệp chúc mừng Ngày Phụ nữ Việt Nam, với WALL-E và EVE, 
 3D, quà theo mùa, lời chúc và trình phát nhạc. Dùng HTML, CSS, JavaScript ES
 Modules và Three.js r128; không cần bước build hay cài dependency để chạy.
 
+![Giao diện desktop: WALL-E và EVE giữa bầu trời sao](docs/images/preview-desktop.png)
+
+**Điểm nổi bật:** sáu phân cảnh 3D, tương tác robot và quà theo mùa, điều hướng bằng chuột/chạm, bố cục responsive và thiệp dự phòng khi không có WebGL.
+
+[Chạy tại máy](#chạy-tại-máy) · [Kiến trúc](docs/ARCHITECTURE.md) · [Kiểm thử](docs/TESTING.md)
+
 ## Chạy tại máy
 
 Cài Node.js **22.13 trở lên**, rồi chạy trong thư mục dự án:

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hành Trình 4 Mùa & Đêm Sao 20/10</title>
+  <link rel="stylesheet" href="css/anime-sky.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/pov.css">
+  <link rel="stylesheet" href="css/vinyl.css">
+  <link rel="stylesheet" href="css/finale.css">
+  <link rel="stylesheet" href="css/experience.css">
+  <link rel="stylesheet" href="css/prop-delivery.css">
+  <meta name="referrer" content="no-referrer">
+  <!-- Three.js r128 is bundled so the experience also works without a CDN. -->
+  <script src="vendor/three.min.js"></script>
+</head>
+<body>
+  <!-- 1. Bầu Trời Anime Makoto Shinkai (Your Name & Weathering with You) -->
+  <div id="anime-sky-container" aria-hidden="true">
+    <div class="sky-layer sky-stage-1 active"></div>
+    <div class="sky-layer sky-stage-2"></div>
+    <div class="sky-layer sky-stage-3"></div>
+    <div class="sky-layer sky-stage-4"></div>
+    <div class="sky-layer sky-stage-5"></div>
+    <div class="sky-layer sky-stage-6"></div>
+  </div>
+
+  <!-- 2. Lớp 3D WebGL Canvas Layer -->
+  <canvas id="webgl-canvas" role="img" aria-label="WALL-E và EVE cùng khám phá bốn mùa giữa bầu trời sao"></canvas>
+
+  <!-- 3. Lớp Giao Diện HUD & Cốt Truyện (Không Chồng Chéo) -->
+  <div id="ui-container">
+    <!-- Top HUD: Cố định góc trên, không bao giờ đè lên nội dung -->
+    <header class="top-hud">
+      <div id="stage-indicator" class="stage-pill">
+        ✨ 01/06 · VŨ TRỤ THỨC GIẤC
+      </div>
+      <div class="top-hud-controls">
+        <button id="audio-toggle" class="audio-status-pill" title="Bật / Tắt âm thanh" aria-pressed="false">
+          <span class="audio-pulse-dot"></span>
+          <span id="audio-label">Âm nhạc: Sẵn sàng</span>
+        </button>
+        <button id="fullscreen-toggle" class="hud-pill-btn" title="Chế độ toàn màn hình">
+          <span class="fullscreen-icon">⛶</span>
+          <span class="fullscreen-text">Toàn màn hình</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Thanh tiến trình 6 Mùa trực quan (Timeline Stepper) -->
+    <nav id="season-stepper" class="season-stepper" aria-label="Điều hướng 6 giai đoạn">
+      <button class="step-node active" data-stage="1" title="GĐ 1: Vũ Trụ Thức Giấc">
+        <span class="node-dot"></span>
+        <span class="node-label">🌌 Vũ Trụ</span>
+      </button>
+      <button class="step-node" data-stage="2" title="GĐ 2: Mùa Xuân Nở Hoa">
+        <span class="node-dot"></span>
+        <span class="node-label">🌸 Mùa Xuân</span>
+      </button>
+      <button class="step-node" data-stage="3" title="GĐ 3: Mùa Hạ Rực Rỡ">
+        <span class="node-dot"></span>
+        <span class="node-label">☀️ Mùa Hạ</span>
+      </button>
+      <button class="step-node" data-stage="4" title="GĐ 4: Mùa Thu 20/10">
+        <span class="node-dot"></span>
+        <span class="node-label">🍁 Mùa Thu</span>
+      </button>
+      <button class="step-node" data-stage="5" title="GĐ 5: Mùa Đông Giáng Sinh">
+        <span class="node-dot"></span>
+        <span class="node-label">❄️ Mùa Đông</span>
+      </button>
+      <button class="step-node" data-stage="6" title="GĐ 6: Đêm Sao Màn Kết">
+        <span class="node-dot"></span>
+        <span class="node-label">🌠 Màn Kết</span>
+      </button>
+    </nav>
+
+    <!-- Khung Phim Cốt Truyện (Cinematic Dialogue Card) - Nằm ở phía trên Wall-E, không che mặt robot -->
+    <main class="narrative-card" id="narrative-box">
+      <div class="dialogue-header">
+        <span class="dialogue-title" id="dialogue-title">Cùng WALL-E và EVE bắt đầu nhé</span>
+      </div>
+      <div class="dialogue-text" id="dialogue-text" tabindex="0" role="region" aria-labelledby="dialogue-title">
+        Chào các bạn nữ, mình là WALL-E. Hôm nay mình và EVE mang đến một bất ngờ nhỏ, cùng lời chúc 20/10 thật nhiều niềm vui...
+      </div>
+      <div id="climax-wish-container"></div>
+      <div class="interaction-hint" id="interaction-hint">
+        Thử các nút và vật sáng trước khi sang mùa mới
+      </div>
+      <div class="scene-actions" role="group" aria-label="Thử tương tác cùng WALL-E và EVE">
+        <button type="button" id="rose-moment" class="scene-action rose-moment" aria-live="polite">🌹 Tặng hoa &amp; hôn</button>
+        <button type="button" id="pair-moment" class="pair-moment scene-action">✧ EVE tặng sao</button>
+      </div>
+      <button id="btn-start-journey" class="btn-start-journey">
+        ✨ Bắt đầu khám phá 4 mùa ✨
+      </button>
+    </main>
+
+    <button type="button" id="prop-discover" class="prop-discover is-new" hidden>
+      <span id="prop-discover-name">✧ Chạm ngôi sao</span>
+      <small>Nhận một món quà 20/10</small>
+    </button>
+
+    <!-- Thông báo tương tác vật thể 3D 4 Mùa (Seasonal 3D Prop Toast) -->
+    <div id="prop-toast" class="prop-toast" style="display: none;" role="status" aria-live="polite">
+      <div class="prop-toast-icon">✨</div>
+      <div class="prop-toast-body">
+        <div class="prop-toast-title">✦ VẬT THỂ 3D ✦</div>
+        <div class="prop-toast-text">Thông điệp mùa</div>
+      </div>
+    </div>
+
+    <!-- Khu Vực Đáy Màn Hình (Bottom Layer): Phân định rõ ràng từng phân cảnh -->
+    <div id="bottom-layer">
+      <!-- Lyric HUD (Chỉ hiển thị khi phát nhạc GĐ 5 & 6) -->
+      <div id="lyric-hud" class="lyric-hud-container" style="display: none;">
+        <div id="lyric-subtext" class="lyric-sub"></div>
+        <div id="lyric-main" class="lyric-main"></div>
+      </div>
+
+      <!-- Góc nhìn POV nắm tay nhau (Chỉ hiển thị GĐ 2, 3, 4) -->
+      <div id="pov-container" class="pov-wrapper" style="display: none;">
+        <div class="pov-hands-svg">
+          <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMax meet">
+            <defs>
+              <linearGradient id="handGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#ffb8dd" stop-opacity="0.75" />
+                <stop offset="60%" stop-color="#c58a9c" stop-opacity="0.4" />
+                <stop offset="100%" stop-color="#150f28" stop-opacity="0" />
+              </linearGradient>
+              <filter id="neonBlur" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="5" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+            </defs>
+            <path d="M0,200 L65,200 C104,173 124,148 151,132 L175,115 C182,107 188,99 195,99 C203,99 206,105 202,111 L191,125 L208,118 C218,114 224,122 217,129 L207,139 C200,150 190,155 176,157 C154,172 142,188 128,200 Z" fill="url(#handGlow)" />
+            <path d="M400,200 L337,200 C299,171 275,145 249,130 L225,111 C217,104 209,101 204,105 C200,108 201,113 207,118 L224,133 L205,128 C195,124 189,130 193,137 C198,147 211,156 226,157 C249,174 261,189 276,200 Z" fill="url(#handGlow)" />
+            <path d="M176,157 C187,145 190,135 191,125 M224,133 C220,142 215,148 207,151" fill="none" stroke="#f7d1d8" stroke-opacity=".55" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </div>
+        <div class="pov-caption" id="pov-caption">Cùng mình qua những mùa yêu thương</div>
+      </div>
+
+      <!-- Thanh Phát Nhạc Đĩa Than Mini (Chỉ hiển thị GĐ 5 & 6) -->
+      <div id="vinyl-dock" class="vinyl-dock" style="display: none;">
+        <div class="track-info">
+          <div class="mini-vinyl-disc" id="mini-vinyl-disc">💿</div>
+          <div class="track-texts">
+            <div class="track-title" id="dock-track-title">Mashup In Love (5 in 1)</div>
+            <div class="track-artist" id="dock-track-artist">TuanSieu196 ft. Hải Nguyễn</div>
+          </div>
+        </div>
+        <div class="dock-controls">
+          <button id="btn-prev-track" class="btn-dock" title="Bài trước">⏮</button>
+          <button id="btn-play-pause" class="btn-dock btn-play" title="Phát / Dừng">▶</button>
+          <button id="btn-next-track" class="btn-dock" title="Bài tiếp">⏭</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Lớp Màn Kết Grand Finale (Stage 6) - Bố Cục Tách Bạch Rõ Ràng -->
+  <div id="finale-layer" class="finale-wrapper" style="display: none;">
+    <!-- Cột bên trái: Dòng Lời Chúc 20/10 Cuộn Êm Đềm -->
+    <div class="wishes-stream-column">
+      <div class="wishes-stream-header">✦ GỬI TRỌN YÊU THƯƠNG NGÀY 20/10 ✦</div>
+      <div class="wishes-stream-scroll" id="wishes-stream-container" tabindex="0" aria-label="Lời chúc ngày 20 tháng 10">
+        <!-- Injected via finale.js -->
+      </div>
+    </div>
+
+    <div class="finale-scenery" role="img" aria-label="WALL-E và EVE ngồi nắm tay ở tiền cảnh bên phải trên bề mặt trăng, ngắm Trái Đất và ngân hà bao la."></div>
+    <div id="finale-ritual" class="finale-ritual">
+      <p class="finale-kicker">MỘT MẦM XANH TRÊN MẶT TRĂNG</p>
+      <p id="finale-story" role="status" aria-live="polite" tabindex="-1">Có một điều dịu dàng đang chờ được đánh thức…</p>
+      <button type="button" id="finale-wish" disabled>Hai bạn đang ươm một điều nhỏ bé…</button>
+      <button type="button" id="finale-read" class="finale-read">Đọc lời chúc</button>
+    </div>
+    <div class="finale-photo-credit">
+      Ngân hà: <a href="https://www.eso.org/public/images/eso0932a/" target="_blank" rel="noopener noreferrer">ESO/S. Brunier</a> · Trái Đất: <a href="https://science.nasa.gov/earth/earth-observatory/blue-marble-next-generation/base-map/" target="_blank" rel="noopener noreferrer">NASA</a>
+    </div>
+  </div>
+
+  <main id="greeting-fallback" class="greeting-fallback" hidden aria-labelledby="fallback-title">
+    <article class="greeting-fallback-card">
+      <p class="dialogue-title">GỬI TRỌN YÊU THƯƠNG · 20/10</p>
+      <h1 id="fallback-title" tabindex="-1">Chúc mừng Ngày Phụ nữ Việt Nam</h1>
+      <p id="fallback-status" role="status">Hành trình 3D hiện chưa mở được. Các bạn nữ vẫn có thể đọc trọn lời chúc trong thiệp này.</p>
+      <p id="fallback-recipient"></p>
+      <div id="fallback-wishes"></div>
+      <button id="fallback-retry" class="btn-start-journey">Thử lại hành trình 3D</button>
+    </article>
+  </main>
+
+  <div class="delivery-atmosphere" aria-hidden="true"></div>
+  <dialog id="prop-letter" class="prop-letter" aria-labelledby="prop-letter-title">
+    <button type="button" class="letter-close" aria-label="Đóng thư và trở lại cảnh">×</button>
+    <p class="letter-date">Ngày 20 tháng 10</p>
+    <h2 id="prop-letter-title" tabindex="-1"></h2>
+    <div class="letter-body" tabindex="0" aria-label="Nội dung thư chúc mừng 20 tháng 10"></div>
+    <footer class="letter-footer">
+      <span>Mình gửi các bạn nữ, bằng tất cả dịu dàng.</span>
+      <button type="button" class="letter-receive">Mình nhận được rồi ♡</button>
+    </footer>
+  </dialog>
+
+  <!-- Entry Script -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

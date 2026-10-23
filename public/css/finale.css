@@ -1,0 +1,171 @@
+/* Moonlit finale: readable wishes beside the live 3D scenery. */
+
+.finale-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 22;
+  display: flex;
+  pointer-events: none;
+  overflow: hidden;
+  animation: fadeInFinale 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInFinale {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 1. Cột Dòng Lời Chúc 20/10 Bên Trái (Left Column Wishes Stream) */
+.wishes-stream-column {
+  width: 28%;
+  max-width: 350px;
+  height: calc(100% - 100px);
+  padding: 5.5rem 1.1rem 1rem 1.8rem;
+  display: flex;
+  flex-direction: column;
+  z-index: 25;
+  background: linear-gradient(90deg, rgba(4, 5, 14, 0.88) 0%, rgba(4, 5, 14, 0.55) 70%, transparent 100%);
+  pointer-events: auto;
+}
+
+.wishes-stream-header {
+  font-family: var(--font-typewriter);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--rose-gold);
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+  text-shadow: 0 0 12px rgba(255, 112, 166, 0.6);
+  flex-shrink: 0;
+}
+
+.wishes-stream-scroll {
+  flex: 1;
+  overflow-y: hidden;
+  position: relative;
+  mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+}
+
+.wishes-marquee-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  animation: scrollWishes 32s linear infinite;
+}
+
+.wishes-stream-column:hover .wishes-marquee-content {
+  animation-play-state: paused; /* Dừng cuộn khi rê chuột vào để đọc */
+}
+
+.wishes-stream-column:focus-within .wishes-marquee-content { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .wishes-stream-scroll { overflow-y: auto; }
+  .wishes-marquee-content .wish-item[aria-hidden="true"] { display: none; }
+}
+
+@keyframes scrollWishes {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(calc(-50% - 0.6rem)); }
+}
+
+.wish-item {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #e2e8f0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+  padding: 0.6rem 0.8rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(233,224,243,.12);
+  border-left: 2px solid #bd91aa;
+  border-radius: 0 16px 16px 0;
+  transition: all 0.3s ease;
+}
+
+.wish-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(4px);
+  border-left-color: var(--stardust-gold);
+}
+
+.wish-item:nth-child(even) {
+  border-left-color: var(--stardust-gold);
+}
+
+/* The transparent region anchors the moon and keeps the wishes/control lanes clear. */
+.finale-scenery {
+  position: absolute;
+  top: 43%;
+  bottom: 7%;
+  left: 43%;
+  right: 13%;
+  z-index: 23;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .finale-wrapper {
+    flex-direction: column;
+  }
+  .wishes-stream-column {
+    width: 48%;
+    max-width: 100%;
+    height: 43%;
+    padding: 7rem .5rem .4rem .8rem;
+    background: linear-gradient(180deg, rgba(4, 5, 14, 0.92) 0%, rgba(4, 5, 14, 0.6) 80%, transparent 100%);
+  }
+  .finale-scenery {
+    top: 52%; bottom: 100px; left: 17%; right: 10px;
+  }
+  .wishes-stream-header { font-size: .6rem; margin-bottom: .7rem; letter-spacing: .02em; }
+  .wish-item { font-size: .78rem; line-height: 1.5; padding: .5rem; }
+}
+@media (max-width: 768px) and (max-height: 500px) and (min-aspect-ratio: 3/2) {
+  .wishes-stream-column { width: 30%; height: calc(100% - 80px); padding: 6.5rem .5rem 1rem; }
+  .finale-scenery { top: 43%; bottom: 15%; left: 43%; right: 8%; }
+}
+.finale-photo-credit { position: absolute; right: 1.5rem; bottom: .65rem; max-width: calc(100% - 24px); text-align: right; font-size: 11px; color: #d9e4ed; text-shadow: 0 1px 4px #000; pointer-events: auto; }
+.finale-photo-credit a { color: inherit; text-underline-offset: 2px; }
+.pair-moment {
+  align-self: center; background: transparent; border: 0; border-bottom: 1px solid #d6b9c64d;
+  color: #ddc8d5; font: inherit; font-size: .72rem; padding: .3rem .5rem; cursor: pointer;
+}
+.pair-moment:hover { color: #fff0da; border-bottom-color: #efd1aa; }
+.pair-moment:disabled { opacity: .5; cursor: default; }
+.pair-moment:focus-visible, .finale-ritual button:focus-visible { outline: 2px solid #ffdfad; outline-offset: 5px; }
+.finale-ritual {
+  position: absolute; z-index: 26; top: 15%; left: 30%; width: 34%; max-width: 440px;
+  text-align: center; color: #f6e5cf; pointer-events: auto; text-shadow: 0 2px 18px #050819;
+}
+.finale-kicker { font-size: .62rem; letter-spacing: .19em; color: #c8b6a6; }
+#finale-story { font-size: clamp(.85rem, 1.4vw, 1.1rem); line-height: 1.8; text-wrap: balance; }
+#finale-story:focus { outline: none; }
+#finale-wish {
+  color: #fbe6c1; border: 1px solid #e7c98b66; border-radius: 30px; padding: .7rem 1.1rem;
+  background: linear-gradient(135deg, #bba57716, #99c8e013); font: inherit; font-size: .8rem; cursor: pointer;
+  box-shadow: 0 0 28px #b9dfff10, inset 0 0 18px #f6d9a50a;
+}
+#finale-wish:disabled { opacity: .55; cursor: default; }
+.finale-read { display: block; margin: .65rem auto; padding: .3rem; background: none; border: 0; color: #bac7d7; font: inherit; font-size: .72rem; cursor: pointer; }
+.finale-wrapper .wishes-stream-column { transition: opacity 1.2s ease; }
+.finale-wrapper.is-unfolding .wishes-stream-column { opacity: 0; pointer-events: none; }
+.finale-wrapper.is-unfolding .wishes-marquee-content { animation-play-state: paused; }
+@media (max-width: 768px) {
+  .finale-ritual { top: 17%; left: 6%; width: 53%; }
+  .finale-kicker { font-size: .5rem; letter-spacing: .08em; }
+  #finale-story { font-size: .82rem; line-height: 1.6; }
+  #finale-wish { font-size: .7rem; padding: .55rem .7rem; }
+}
+@media (max-height: 600px) and (min-aspect-ratio: 3/2) {
+  .finale-ritual { top: 22%; left: 3%; width: 33%; }
+  .finale-kicker { margin: .3rem 0; }
+  #finale-story { margin: .45rem 0; font-size: .8rem; }
+}
+@media (prefers-reduced-motion: reduce) { .finale-wrapper .wishes-stream-column { transition: none; } }
+@media (max-width: 768px) { .finale-photo-credit { bottom: 79px; right: 12px; font-size: 10px; } }
+@media (max-width: 768px) and (max-height: 500px) and (min-aspect-ratio: 3/2) { .finale-photo-credit { bottom: 8px; } }

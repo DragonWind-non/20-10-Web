@@ -8,6 +8,7 @@ Thumbs.db
 # Local reports, captures and deployment snapshots
 /output/
 /dist/
+/20.10-GitHub.zip
 /coverage/
 *.log
 __pycache__/

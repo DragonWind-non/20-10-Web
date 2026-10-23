@@ -1,0 +1,46 @@
+/* Cinematic painted environments; the live scene adds weather and depth. */
+#anime-sky-container {
+  position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+  background: #091324; z-index: 0;
+}
+.sky-layer {
+  position: absolute; inset: -32px; opacity: 0; visibility: hidden;
+}
+.sky-layer.active {
+  opacity: 1; visibility: visible;
+}
+.sky-layer.departing { visibility: visible; }
+.scene-passage-glow {
+  position: absolute; inset: -32px; opacity: 0;
+  background: radial-gradient(ellipse at 65% 48%,rgba(208,225,255,.32),transparent 62%),
+    radial-gradient(ellipse at 22% 68%,rgba(255,218,191,.2),transparent 55%);
+}
+.scene-backdrop {
+  position: absolute; width: 100%; height: 100%; object-fit: cover;
+  object-position: center 62%;
+  transform: translate3d(var(--sky-x,0px),var(--sky-y,0px),0) scale(1.025);
+  transition: transform 1.6s cubic-bezier(.16,1,.3,1);
+}
+.sky-layer::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg,rgba(8,18,36,.25),transparent 45%,rgba(7,17,33,.08)),
+    radial-gradient(ellipse at 50% 48%,transparent 35%,rgba(5,13,28,.18));
+}
+.sky-stage-1 { background: #0b1830; }
+.sky-stage-2 { background: linear-gradient(#686984,#e4afba); }
+.sky-stage-3 { background: linear-gradient(#205489,#a6cad4); }
+.sky-stage-4 { background: linear-gradient(#38394e,#dfab87); }
+.sky-stage-5 { background: linear-gradient(#142e50,#7394ae); }
+.sky-stage-6 { background: #101c38; }
+.sky-stage-1 .scene-backdrop { object-position: 58% 62%; }
+.sky-stage-6 .scene-backdrop { object-position: 58% 65%; }
+@media (max-width: 600px) {
+  .scene-backdrop { object-position: 50% 72%; }
+  .sky-stage-1 .scene-backdrop { object-position: 57% 62%; }
+  .sky-stage-6 .scene-backdrop { object-position: 58% 72%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sky-layer, .sky-layer.active { transform: none; }
+  .scene-passage-glow { display: none; }
+  .scene-backdrop { transform: none; transition: none; }
+}
